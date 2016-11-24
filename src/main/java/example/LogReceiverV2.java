@@ -5,34 +5,23 @@ import redis.clients.jedis.Jedis;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 /**
- * Created by yookeun on 2016. 11. 23..
- *
- * [출처 :: 이것이 레디스디 - 정경석 지음 (한빛미디어) 소스] 일부 수정
+ * Created by yookeun on 2016. 11. 24..
  */
-public class LogReceiver {
-    private static final String KEY_WAS_LOG = "was:log";
+public class LogReceiverV2 {
+    private static final String KEY_WAS_LOG = "was:log:list";
     private static final JedisHelper helper = JedisHelper.getInstance();
     private static final String LOG_FILE_NAME_PREFIX = "./waslog";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HH'.log'");
-    private static final int WAITING_TERM = 5000;
 
 
-    /**
-     * 레디스 서버에서 로그를 읽어들여서 파일로 저장한다
-     * 프로그램이 종료되기 전까지 무한 실행된다
-     */
     public void start() {
-        Random random = new Random();
         Jedis jedis = helper.getConnection();
-
         while (true) {
-            writeFile(jedis.getSet(KEY_WAS_LOG, ""));
-            try {
-                Thread.sleep(random.nextInt(WAITING_TERM));
-            } catch (InterruptedException e) {}
+            String log = jedis.rpop(KEY_WAS_LOG);
+            if (log == null) break;
+            writeFile(log);
         }
     }
 
@@ -41,16 +30,16 @@ public class LogReceiver {
     }
 
     private void writeFile(String log) {
+        if (log == null) return;
         FileWriter writer = null;
         try {
             writer = new FileWriter(getCurrentFileName(), true);
             writer.write(log);
-            writer.flush();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-               if (writer != null) writer.close();
+                if (writer != null) writer.close();
             } catch(Exception e){}
         }
     }
