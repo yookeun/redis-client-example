@@ -49,6 +49,7 @@ public class VisitCountTest {
         }
 
         String totalCount = visitCount.getVisitTotalCount();
+        System.out.println("totalCount === " + totalCount + ", sum === " + sum);
         assertEquals(String.valueOf(sum), totalCount);
     }
 }

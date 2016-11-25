@@ -29,12 +29,12 @@ public class VisitCountOfDayTest {
     public void testAddVisit() {
         VisitCount visitCount = new VisitCount(helper);
         assertTrue(visitCount.addVisit("52") > 0);
-        assertTrue(visitCount.addVisit("100") > 0);
+        assertTrue(visitCount.addVisit("180") > 0);
         assertTrue(visitCount.addVisit("554") > 0);
 
         VisitCountOfDay visitCountOfDay = new VisitCountOfDay(helper);
         assertTrue(visitCountOfDay.addVisit("52") > 0);
-        assertTrue(visitCountOfDay.addVisit("100") > 0);
+        assertTrue(visitCountOfDay.addVisit("180") > 0);
         assertTrue(visitCountOfDay.addVisit("554") > 0);
 
     }
